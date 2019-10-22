@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <title>Create Exam Questions</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <br>
+        <h1 style="text-align: center;">Create Questions for the Test Bank</h1>
+        <form id = "Qform" method="POST">
+        <h3 style="text-align:center;">Enter Question Difficulty </h3>
+        <div class = "createQBox" style="text-align: center;">
+            <input type = "radio" name = "difficulty" value = "Easy" required> Easy
+            <input type = "radio" name = "difficulty" value = "Medium" required> Intermediate
+            <input type = "radio" name = "difficulty" value = "Hard" required> Difficult<br>
+            <h3> Select a Question Topic</h3>
+            <select required name="topic">
+                <option value="">None</option>
+                <option value = "lists">Lists</option>
+                <option value = "loops">For Loops</option>
+                <option value = "ifs"> Ifs</option>
+                <option value = "strings">Strings</option>
+                <option value = "while">While Loops</option>
+                <option value = "recursion">Recursion</option>
+            </select>
+            <h3>Enter the Question</h3>
+            <textarea id="createQ" name="instructions" placeholder="Enter the Question here" style="height:100px; width: 450px;" required></textarea>
+
+            <h3>Enter Keywords Associated with the Question</h3>
+            <input type = "text" name = "keywords"><br>
+
+            <h3> Test Cases for the Question</h3>
+            Input Value:&emsp;     
+            &emsp;<input type="text" name="input1" placeholder="First Input" required>     <input type="text" name="input2" placeholder="Second Input" required><br><br>
+            Expected Output:      
+            <input type="text" name="result1" placeholder="First Expected Output" required>     <input type="text" name="result2" placeholder="Second Expected Output" required><br><br>
+            <input type="submit" value="Submit" id="createQs">
+            <input type="reset"><br><br><br>
+        </form>
+        <script>
+        
+        var h3Ref = document.getElementById("msgDisplay");
+        var formRef = document.getElementById("Qform"); 
+        
+        //check data input and submit to the DB, displays status message if successful       
+        function handleClick(event){
+            event.preventDefault();
+            //check if required fields are filled out
+            if(!Qform.checkValidity()){
+                window.alert("Required fields are missing");
+                return;
+            }
+            var fieldData = new FormData(formRef);
+            console.log(fieldData);
+           fetch("https://web.njit.edu/~aar73/Case.php",{method: "POST", body: fieldData})
+                .then(response => {
+                    return response.json();
+                })
+                .then(body => {
+                    console.log(body)
+                    window.alert("Question Added to Test Bank");
+                    formRef.reset();
+                    })
+            }
+        var subBTN = document.getElementById("createQs");
+        subBTN.onclick = handleClick;
+        </script>
+        <input type="button" onclick="window.location.href = 'https://web.njit.edu/~aet6/cs490beta/profLanding.html';" value="Back to the Homepage"/>
+      </div>           
+      </body>
+</html>

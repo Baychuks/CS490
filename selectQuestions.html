@@ -1,0 +1,223 @@
+<html>
+    <head>
+        <title>Select Exam Questions</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <h1 style="text-align: center;">Select Exam Questions to Create an Exam</h1>
+        <form id="qSearchForm" method="POST" style="text-align: center;">
+            <h3> Select a Question Topic to Search for</h3>
+            <select name="topic">
+                <option value="">None</option>
+                <option value = "lists">Lists</option>
+                <option value = "loops">For Loops</option>
+                <option value = "ifs"> Ifs</option>
+                <option value = "strings">Strings</option>
+                <option value = "while">While Loops</option>
+                <option value = "recursion">Recursion</option>
+            </select>
+            <h3> Select a Question Difficulty</h3>
+            <select name="difficulty">
+                <option value="">None</option>
+                <option value = "Easy">Easy</option>
+                <option value = "Medium">Intermediate</option>
+                <option value = "Hard"> Difficult</option>
+            </select>
+            <h3>Enter Any Keywords to Search For</h3>
+            <input type = "text" name = "keywords" /><br />
+            <input type="submit" value="Submit" onclick="populateSelect()" />
+            <input type="reset" />
+        </form>
+        <div class="availableContainer">
+            <h2>Available Questions</h2>
+            <table id="availableTable">
+                <tr class="header">
+                    <th>Question</th>
+                    <th></th>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="selectedContainer">
+            <h2>Selected Questions</h2>
+            <table id="selectedTable">
+                <tr class="header">
+                    <th>Question</th>
+                    <th>Points</th>
+                    <th></th>
+                </tr>
+            </table>
+        </div>
+        
+        <br />
+
+        <!-- These prototypes are hidden, never visible, and not in a form tag -->
+        <table id="prototypes">
+            <tr id="availableRowPrototype">
+                <input class="id" type="hidden" value="id" />
+                <td class="question">asfdas</td>
+                <td class="add">
+                    <button>Add</button>
+                </td>
+            </tr>
+
+            <tr id="selectedRowPrototype">
+                <input class="id" type="hidden" value="id" />
+                <td class="question">asfdas</td>
+                <td class="points">
+                    <input type="number" />
+                </td>
+                <td class="remove">
+                    <button>Remove</button>
+                </td>
+            </tr>
+        </table>
+        <br />
+        <input type="submit" id= "submitExam" style="position: absolute; left: 46%;width: 100px;height: 40px;"/><br /><br /><br /> 
+        <input type="button" style="position: absolute; left: 44%;" onclick="window.location.href = 'https://web.njit.edu/~aet6/cs490beta/profLanding.html';" value="Back to the Homepage" />
+
+        <script>
+            // available table reference and a prototype row
+            var availableRowProto = document.getElementById('availableRowPrototype');
+            var availableTable = document.querySelector('#availableTable tbody');
+            // selected table reference and a prototype row
+            var selectedRowProto = document.getElementById('selectedRowPrototype');
+            var selectedTable = document.querySelector('#selectedTable tbody');
+            var availableQuestions = [];
+            var selectedQuestions = [];
+            function populateSelect() {  
+                var formRef = document.getElementById("qSearchForm");           
+                event.preventDefault();
+                if(!qSearchForm.checkValidity()){
+                    window.alert("Required fields are missing");
+                    return;
+                }
+                var fieldData = new FormData(formRef);
+                console.log(fieldData);
+                fetch("https://web.njit.edu/~aar73/Kipp.php",{method: "POST", body: fieldData})
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(body => {
+                        console.log(body)
+                        availableQuestions = body.questions;
+                        clearAvailableTable();
+                        renderAvailableQuestions(availableQuestions);
+                    })
+                }
+
+            // renders a single row in the available table from data
+            function renderAvailableTableRow(availableData) {
+                // clone the table row prototype and remove prototype class/id
+                var rowClone = availableRowProto.cloneNode(true);
+                rowClone.removeAttribute('id');
+
+                // edit info in prototype row before rendering
+                var idInput = rowClone.querySelector('.id');
+                var questionCol = rowClone.querySelector('.question');
+                var addBtn = rowClone.querySelector('.add button');
+
+                // set data in the various fields of the row
+                idInput.value = availableData.id;
+                questionCol.innerHTML = availableData.instructions;
+                addBtn.onclick = () => addSelectedQuestion({
+                    id: availableData.id,
+                    instructions: availableData.instructions,
+                    points: 0
+                });
+
+                // add the new table row to the table
+                availableTable.appendChild(rowClone);
+            }
+
+            // clear table without clearing the header
+            function clearAvailableTable() {
+                var rows = availableTable.querySelectorAll('tr:not(.header)');
+                for(var row of rows) {
+                    row.remove();
+                }
+            }
+
+            // render a list of questions
+            function renderAvailableQuestions(questionArray) {
+                for(var question of questionArray) {
+                    renderAvailableTableRow(question);
+                }
+            }
+
+            // renders a single row in the selected table from data
+            function renderSelectedTableRow(selectedData, index=0) {
+                // clone the table row prototype and remove prototype class/id
+                var rowClone = selectedRowProto.cloneNode(true);
+                rowClone.removeAttribute('id');
+
+                // edit info in prototype row before rendering
+                var idInput = rowClone.querySelector('.id');
+                var questionCol = rowClone.querySelector('.question');
+                var pointsInput = rowClone.querySelector('.points input');
+                var removeBtn = rowClone.querySelector('.remove button');
+                // potentially more hidden inputs depending on data to send to server
+
+                // set data in the various fields of the row
+                idInput.value = selectedData.id;
+                questionCol.innerHTML = selectedData.instructions;
+                pointsInput.value = selectedData.points;
+                pointsInput.onchange = (e) => changePoints(index, e.target.value);
+                removeBtn.onclick = () => removeSelectedQuestion(selectedData.id);
+
+                // add the new table row to the table
+                selectedTable.appendChild(rowClone);
+            }
+
+            // clear table without clearing the header
+            function clearSelectedTable() {
+                var rows = selectedTable.querySelectorAll('tr:not(.header)');
+                for(var row of rows) {
+                    row.remove();
+                }
+            }
+
+            // render a list of questions
+            function renderSelectedQuestions(questionArray) {
+                var i = 0;
+                for(var question of questionArray) {
+                    renderSelectedTableRow(question, i);
+                    i++;
+                }
+            }
+
+            function addSelectedQuestion(question) {
+                selectedQuestions.push(question);
+                clearSelectedTable();
+                renderSelectedQuestions(selectedQuestions);
+            }
+
+            // updates a questions point value in raw data
+            function changePoints(index, points) {
+                selectedQuestions[index].points = parseInt(points);
+            }
+
+            // removes a selected question from the listl
+            function removeSelectedQuestion(questionId) {
+                selectedQuestions = selectedQuestions.filter(s => s.id !== questionId);
+                clearSelectedTable();
+                renderSelectedQuestions(selectedQuestions);
+            }
+
+            function handleClick(event){
+            event.preventDefault();
+           fetch("aarons php to send the exam",{method: "POST", body:JSON.stringify(selectedQuestions)})
+                .then(response => {
+                    return response.json();
+                })
+                .then(body => {
+                    console.log(body)
+                    window.alert("Exam Released to Students");
+                })
+            }
+
+            var subBTN = document.getElementById("submitExam");
+            subBTN.onclick = handleClick;
+        </script>
+    </body>
+</html>

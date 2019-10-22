@@ -1,0 +1,182 @@
+<html>
+    <head>
+        <title>Review and Edit Scores</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <!-- This version is if each individual question needs an edittable point value field-->
+    </head>
+    <body>
+      <h1 style="text-align: center;">Review and Edit Student Scores</h1><br><br><br>
+    <div class="availableContainer">
+        <h2>Student Exam Grades</h2>
+        <table id="studentScores">
+            <tr class="header">
+                <th>Student UCID</th>
+                <th>Student Score</th>
+                <th></th>
+            </tr>
+        </table>
+    </div>
+    
+    <div class="selectedContainer">
+        <h2>Edit the Score</h2>
+        <table id="editScore">
+            <tr class="header">
+                <th>Question</th>
+                <th>Points Available</th>
+                <th>Points Awarded</th>
+                <th></th>
+            </tr>
+        </table>
+    </div>    
+    <br />
+    <!-- These prototypes are hidden, never visible, and not in a form tag -->
+    <table id="prototypes">
+        <tr id="studentScoreRowPrototype">
+            <input class="id" type="hidden" value="id" />
+            <td class="ucid">asfdas</td>
+            <td class="score">asfdas</td>
+            <td class="edit">
+                <button>Edit</button>
+            </td>
+        </tr>
+
+        <tr id="editScoreRowPrototype">
+            <input class="id" type="hidden" value="id" />
+            <td class="question">asfdas</td>
+            <td class="availPoints">asfdas</td>
+            <td class="points">
+                <input type="number" />
+            </td>
+            <td class="save">
+                <button>Save</button>
+            </td>
+        </tr>
+    </table>
+    <br />
+    <input type="button" id= "releaseScores" value="Release Scores" style="position: absolute; left: 44%;width: 150px;height: 40px; "/><br /><br /><br /> 
+    <input type="button" style="position: absolute; left: 44%;" onclick="window.location.href = 'https://web.njit.edu/~aet6/cs490beta/profLanding.html';" value="Back to the Homepage" />
+    <script>
+        // available table reference and a prototype row
+        var scoreRowProto = document.getElementById('studentScoreRowPrototype');
+        var scoreTable = document.querySelector('#studentScores tbody');
+        // selected table reference and a prototype row
+        var editRowProto = document.getElementById('editScoreRowPrototype');
+        var editTable = document.querySelector('#editScore tbody');
+        var studentGrades = [];
+        var questionPoints = [];
+
+        fetch("Aarons php to fetch all exam grades",{credentials:"include",credentials:"same-origin"})
+            .then(response => {
+                return response.json();
+            })
+            .then(body => {
+                console.log(body)
+                studentGrades = body.student;
+                clearStudentTable();
+                renderStudentScores(studentGrades);
+            })
+        // renders a single row in the available table from data
+        function renderScoreTableRow(availableData) {
+            // clone the table row prototype and remove prototype class/id
+            var rowClone = scoreRowProto.cloneNode(true);
+            rowClone.removeAttribute('id');
+
+            // edit info in prototype row before rendering
+            var idInput = rowClone.querySelector('.id');
+            var ucidCol = rowClone.querySelector('.ucid');
+            var scoreCol = rowClone.querySelector('.score');
+            var editBtn = rowClone.querySelector('.edit button');
+
+            // set data in the various fields of the row
+            idInput.value = availableData.id;
+            ucidCol.innerHTML = availableData.ucid;
+            scoreCol.innerHTML = availableData.score;
+            editBtn.onclick = () => editSelectedStudent({
+                //need to pull up that students grade breakdown when the edit button is pushed
+                //hopefully. if possible.
+            });
+            // add the new table row to the table
+            scoreTable.appendChild(rowClone);
+        }
+        // clear table without clearing the header
+        function clearStudentTable() {
+            var rows = scoreTable.querySelectorAll('tr:not(.header)');
+            for(var row of rows) {
+                row.remove();
+            }
+        }
+        function renderStudentScores(studentArray) {
+            for(var student of studentArray) {
+                renderAvailableTableRow(student);
+            }
+        }
+        // renders a single row in the selected table from data
+        function renderSelectedTableRow(selectedData, index=0) {
+            // clone the table row prototype and remove prototype class/id
+            var rowClone = editRowProto.cloneNode(true);
+            rowClone.removeAttribute('id');
+
+            // edit info in prototype row before rendering
+            var idInput = rowClone.querySelector('.id');
+            var answerCol = rowClone.querySelector('.answer');
+            var availableCol = rowClone.querySelector('.availPoints input');
+            var awardedCol = rowClone.querySelector('.points input');
+            var saveBtn = rowClone.querySelector('.save button');
+
+            // set data in the various fields of the row
+            idInput.value = selectedData.id;
+            answerCol.innerHTML = selectedData.answer;
+            availableCol.innerHTML = selectedData.availPoints;
+            awardedCol.value = selectedData.points;
+            awardedCol.onchange = (e) => changePoints(index, e.target.value);
+            //save button just clears the table because its already saved
+            saveBtn.onclick = () => clearQuestionTable();
+
+            // add the new table row to the table
+            editTable.appendChild(rowClone);
+        }
+        // clear table without clearing the header
+        function clearQuestionTable() {
+            var rows = editTable.querySelectorAll('tr:not(.header)');
+            for(var row of rows) {
+                row.remove();
+            }
+        }
+
+        // render a list of questions, should be the individual questions in the JSON for each student i get back
+        function renderSelectedQuestions(questionArray) {
+            var i = 0;
+            for(var question of questionArray) {
+                renderSelectedTableRow(question, i);
+                i++;
+            }
+        }
+
+        /*function addSelectedQuestion(question) {
+            questionPointd.push(question);
+            clearQuestionTable();
+            renderSelectedQuestions(selectedQuestions);
+        }*/
+
+        // updates a questions point value in raw data
+        function changePoints(index, points) {
+            questionPoints[index].points = parseInt(points);
+        }
+        //this would also need to send back updated scores to the database
+        function handleClick(event){
+            event.preventDefault();
+           fetch("Aarons php page",{method: "POST", body:JSON.stringify(studentGrades),credentials:"include", credentials:"same-origin"})
+                .then(response => {
+                    return response.json();
+                })
+                .then(body => {
+                    console.log(body)
+                    window.alert("Scores Released to Students");
+                })
+            }
+
+            var subBTN = document.getElementById("releaseScores");
+            subBTN.onclick = handleClick;
+        </script>
+    </body>
+</html>
