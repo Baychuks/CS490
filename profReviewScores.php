@@ -1,6 +1,7 @@
 <?php
     //send the request to aaron, doesnt require any data
     $curl = curl_init('https://web.njit.edu/~aar73/Trace.php');
+    //$curl = curl_init('http://localhost/cs490/beta/placeholderPHPs/placeholderRawJSON.php');
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_COOKIEJAR,'cookie.txt');
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -30,7 +31,7 @@
        <td><?php echo $students[$i]['ucid']; ?></td>
        <td><?php echo $students[$i]['fullname']; ?></td>
        <!--<td><?php echo $students[$i]['role']; ?></td>-->
-       <td> <button onclick="window.location.href ='http://localhost/cs490/beta/EditAScore.php?ucid=<?php echo $students[$i]['ucid']; ?>'">Edit</button></td>
+       <td> <button onclick="window.location.href ='https://web.njit.edu/~aet6/cs490beta/EditAScore.php?ucid=<?php echo $students[$i]['ucid']; ?>'">Edit</button></td>
       <?php endfor; ?>
      </tr>
    </table>
@@ -47,8 +48,8 @@
                     return response.json();
                 })
                 .then(body => {
-                    console.log(body);
-                    window.alert("Exam Grades Released to Students");
+                    console.log(body)
+                    window.alert(body.message);
                     })
             }
         var subBTN = document.getElementById("release");

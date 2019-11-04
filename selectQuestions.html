@@ -94,7 +94,7 @@
                 }
                 var fieldData = new FormData(formRef);
                 console.log(fieldData);
-                fetch("https://web.njit.edu/~aar73/Kipp.php",{method: "POST", body: fieldData})
+                fetch("https://web.njit.edu/~aar73/Kipp.php",{method: "POST", body: fieldData, credentials:"include"})
                     .then(response => {
                         return response.json();
                     })
@@ -206,13 +206,13 @@
 
             function handleClick(event){
             event.preventDefault();
-           fetch("aarons php to send the exam",{method: "POST", body:JSON.stringify(selectedQuestions)})
+           fetch("https://web.njit.edu/~aar73/Spire.php",{method: "POST", body:JSON.stringify(selectedQuestions), credentials:"include"})
                 .then(response => {
                     return response.json();
                 })
                 .then(body => {
                     console.log(body)
-                    window.alert("Exam Released to Students");
+                    window.alert(body.message);
                 })
             }
 

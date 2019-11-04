@@ -1,6 +1,6 @@
 <?php
     //grab the specific students ucid from the cookie
-    $arr = array( "ucid" => $COOKIE['ucid']);
+    $arr = array( "ucid" => $_COOKIE['ucid']);
     $data = json_encode($arr);
     //send the student ucid to aaron
     $curl = curl_init('https://web.njit.edu/~aar73/Mance.php');
@@ -12,13 +12,14 @@
     $result = curl_exec($curl);
     curl_close($curl);
     $score = json_decode($result,true);
+
 ?>
 <html>
     <head>
         <title> Review Exam</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="style1.css">
     </head>
-    <body>
+    <body style= "text-align: center;">
         <br>
         <h1 style="text-align: center;">Review Your Exam Scores</h1>
         <?php $i = 0; ?>
