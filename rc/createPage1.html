@@ -1,0 +1,109 @@
+<html>
+    <head>
+            <link rel="stylesheet" type="text/css" href="style1.css">
+    </head>
+    <body>
+    <h2 style="text-align: center;">Create a New Question</h2>
+    <form id = "Qform" method="POST">
+    <h3 style="text-align:center;">Enter Question Difficulty </h3>
+    <div class = "createQBox" style="text-align: center;">
+
+    <select required name="difficulty">
+        <option value = "">None</option>
+        <option value = "Easy">Easy</option>
+        <option value = "Medium">Intermediate</option>
+        <option value = "Hard">Difficult</option>
+    </select>
+
+    <h3> Select a Question Topic</h3>
+    <select required name="topic">
+        <option value ="">None</option>
+        <option value = "lists">Lists</option>
+        <option value = "loops">For Loops</option>
+        <option value = "ifs"> Ifs</option>
+        <option value = "strings">Strings</option>
+        <option value = "while">While Loops</option>
+        <option value = "recursion">Recursion</option>
+    </select>
+
+    <h3>Enter the Function name</h3>
+    <input type = "text" name = "name" required><br>
+
+    <h3>Enter the Question</h3>
+    <textarea id="createQ" name="instructions" placeholder="Enter the Question here" style="height:100px; width: 450px;" required></textarea>
+
+    <h3> Test Cases for the Question</h3>
+    <p><b>Enter 2-6 test cases</b></p>
+    <input type="text" value="Input">
+    <input type="text" value="Output"><br>
+    <input type="text" value="Input">
+    <input type="text" value="Output"><br>
+    <span id="createPage">&nbsp;</span>
+    <INPUT type="button" value="Add Case" onclick="add(document.forms[0])"><br>
+    <br><br/>
+
+    <input type="submit" value="Submit" id="createQs">
+    <button id="resetForm">Reset form</button><br><br><br>
+</form>
+<h3 id = "msgDisplay" style = "display:none; text-align: center; ">  Submit message </h3>
+<script>
+    
+lb = function () { return document.createElement('BR'); }
+
+function add(type) {
+    var numElements = document.getElementById("createPage").querySelectorAll("INPUT").length; 
+    if (numElements<8){
+        var x = document.createElement("INPUT");
+        x.setAttribute("type", "text");
+        x.setAttribute("value", "Input");
+        var y = document.createElement("INPUT");
+        y.setAttribute("type", "text");
+        y.setAttribute("value", "Output");
+        var cases = document.getElementById("createPage");
+        cases.appendChild(x);
+        cases.appendChild(y);
+        cases.appendChild(lb());
+    }
+    else{
+        return;
+    }
+}
+
+var h3Ref = document.getElementById("msgDisplay");
+var formRef = document.getElementById("Qform"); 
+
+function removeItems(){
+    formRef.reset();
+    var clearItem = document.getElementById("createPage") 
+    while (clearItem.firstChild) { 
+        clearItem.removeChild(clearItem.firstChild);
+    }
+}
+//check data input and submit to the DB, displays status message if successful       
+function handleClick(event){
+    event.preventDefault();
+    //check if required fields are filled out
+    if(!Qform.checkValidity()){
+        window.alert("Required fields are missing");
+        return;
+    }
+    var fieldData = new FormData(formRef);
+    console.log(fieldData);
+   fetch("https://web.njit.edu/~aar73/Case.php",{method: "POST", body: fieldData, credentials:"include"})
+        .then(response => {
+            return response.json();
+        })
+        .then(body => {
+            console.log(body)
+            h3Ref.style.display = "block";
+            h3Ref.innerText = body.message;
+            removeItems();
+            })
+    }
+var resetBTN = document.getElementById("resetForm");
+resetBTN.onclick = removeItems;
+var subBTN = document.getElementById("createQs");
+subBTN.onclick = handleClick;
+</script>
+</body>
+</html>

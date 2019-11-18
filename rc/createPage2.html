@@ -1,0 +1,106 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="style1.css">
+    </head>
+    <body>
+        <h1 style="text-align: center;">Search for Already Existing Questions</h1>
+        <form id="qSearchForm" method="POST" style="text-align: center;">
+            <h3> Select a Question Topic to Search for</h3>
+            <select name="topic">
+                <option value="">None</option>
+                <option value = "lists">Lists</option>
+                <option value = "loops">For Loops</option>
+                <option value = "ifs"> Ifs</option>
+                <option value = "strings">Strings</option>
+                <option value = "while">While Loops</option>
+                <option value = "recursion">Recursion</option>
+            </select>
+            <h3> Select a Question Difficulty</h3>
+            <select name="difficulty">
+                <option value="">None</option>
+                <option value = "Easy">Easy</option>
+                <option value = "Medium">Intermediate</option>
+                <option value = "Hard"> Difficult</option>
+            </select>
+            <h3>Enter Any Keywords to Search For</h3>
+            <input type = "text" name = "keywords" /><br />
+            <input type="submit" value="Submit" onclick="populateSelect()" />
+            <input type="reset" />
+        </form>
+        <div class="availableContainer">
+            <h2 >Available Questions</h2>
+            <table id="availableTable">
+                <tr class="header">
+                    <th>Question</th>
+                </tr>
+            </table>
+        </div>
+
+        <!-- These prototypes are hidden, never visible, and not in a form tag -->
+        <table id="prototypes">
+                <tr id="availableRowPrototype">
+                    <input class="id" type="hidden" value="id" />
+                    <td class="question">asfdas</td>
+                    </td>
+                </tr>
+        </table>
+        <br />
+    <script>
+        // available table reference and a prototype row
+        var availableRowProto = document.getElementById('availableRowPrototype');
+        var availableTable = document.querySelector('#availableTable tbody');
+        var availableQuestions = [];
+        function populateSelect() {  
+            var formRef = document.getElementById("qSearchForm");           
+            event.preventDefault();
+            if(!qSearchForm.checkValidity()){
+                window.alert("Required fields are missing");
+                return;
+            }
+            var fieldData = new FormData(formRef);
+            console.log(fieldData);
+            fetch("https://web.njit.edu/~aar73/Kipp.php",{method: "POST", body: fieldData, credentials:"include"})
+                .then(response => {
+                    return response.json();
+                })
+                .then(body => {
+                    console.log(body)
+                    availableQuestions = body.questions;
+                    clearAvailableTable();
+                    renderAvailableQuestions(availableQuestions);
+                })
+            }
+        // renders a single row in the available table from data
+        function renderAvailableTableRow(availableData) {
+            // clone the table row prototype and remove prototype class/id
+            var rowClone = availableRowProto.cloneNode(true);
+            rowClone.removeAttribute('id');
+
+            // edit info in prototype row before rendering
+            var idInput = rowClone.querySelector('.id');
+            var questionCol = rowClone.querySelector('.question');
+
+            // set data in the various fields of the row
+            idInput.value = availableData.id;
+            questionCol.innerHTML = availableData.instructions;
+
+            // add the new table row to the table
+            availableTable.appendChild(rowClone);
+        }
+
+        // clear table without clearing the header
+        function clearAvailableTable() {
+            var rows = availableTable.querySelectorAll('tr:not(.header)');
+            for(var row of rows) {
+                row.remove();
+            }
+        }
+        // render a list of questions
+        function renderAvailableQuestions(questionArray) {
+            for(var question of questionArray) {
+                renderAvailableTableRow(question);
+                }
+            }
+        </script>
+    </body>
+</html>
