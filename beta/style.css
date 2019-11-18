@@ -1,0 +1,150 @@
+body{
+   margin: 0;
+   padding: 0;
+   background: url(bgPic.jpg);
+   background-size: cover;
+   background-position: center
+      
+}
+
+.loginbox{
+    width: 320px;
+    height: 300px;
+    background: #ffffff;
+    color: #000;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    border: 1px solid #000;
+    font-size: 20px;
+    text-align: center
+
+}
+
+.lock{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    top: -75px;
+    left: calc(50% - 50px);
+}
+
+.loginbox p{
+    margin: 0;
+    padding: 10px 0 10px;
+    font-weight: bold;
+    
+}
+
+.btnChoice{
+    padding: 50px;
+    width: 200px;
+    height: 300px;
+    background: #ffffff;
+    color: #000;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    border: 1px solid #000;
+    font-size: 20px;
+    text-align: center
+}
+
+.btnChoice p{
+    margin: 0;
+    padding: 10px 0 10px;
+    font-weight: bold;
+    
+}
+
+.examPic{
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    top: 33%;
+    left: 70%;
+    background: transparent;    
+}
+
+.btnChoiceStudent{
+    padding: 50px;
+    width: 200px;
+    height: 150x;
+    background: #ffffff;
+    color: #000;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    border: 1px solid #000;
+    font-size: 20px;
+    text-align: center
+}
+
+.btnChoiceStudent p{
+    margin: 0;
+    padding: 10px 0 10px;
+    font-weight: bold;
+    
+}
+
+.studentPic{
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    top: 33%;
+    left: 70%;
+    background: transparent;    
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid black;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: whitesmoke;
+}
+
+tr:nth-child(odd) {
+    background-color: mistyrose;
+}
+
+#prototypes {
+    display: none;
+}
+
+#submitBtn {
+    margin-top:50px;
+}
+
+.availableContainer {
+    width: 30%;
+    display: inline-block;
+    margin-right: 5%;
+}
+
+.selectedContainer {
+    width: 50%;
+    display: inline-block;
+}
+
+
+
+    
+
+
+
+
+
