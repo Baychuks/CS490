@@ -34,10 +34,12 @@
             <input type="hidden" name="questions[<?php echo $i; ?>][name]" value="<?php echo $question["name"]; ?>" />
             <input type="hidden" name="questions[<?php echo $i; ?>][student_examid]" value="<?php echo $id; ?>" />
             <input type="hidden" name="questions[<?php echo $i; ?>][pointvalue]" value="<?php echo $question["pointvalue"]; ?>" />
-            <input type="hidden" name="questions[<?php echo $i; ?>][input1]" value="<?php echo $question["input1"]; ?>" />
-            <input type="hidden" name="questions[<?php echo $i; ?>][result1]" value="<?php echo $question["result1"]; ?>" />
-            <input type="hidden" name="questions[<?php echo $i; ?>][input2]" value="<?php echo $question["input2"]; ?>" />
-            <input type="hidden" name="questions[<?php echo $i; ?>][result2]" value="<?php echo $question["result2"]; ?>" />
+            <?php $j = 0; ?>
+            <?php foreach($question["testcases"] as $testcases): ?>
+                <input type="hidden" name="questions[<?php echo $i; ?>][testcases][<?php echo $j; ?>][input]" value="<?php echo $question["testcases"][$j]["input"]; ?>" />
+                <input type="hidden" name="questions[<?php echo $i; ?>][testcases][<?php echo $j; ?>][result]" value="<?php echo $question["testcases"][$j]["result"]; ?>" />
+                <?php $j++; ?>
+            <?php endforeach; ?> 
             <?php $i++; ?>
         <?php endforeach; ?>           
                      
@@ -62,9 +64,7 @@
                 })
                 .then(body => {
                     console.log(body)
-                    h3Ref.style.display = "block";
-                    h3Ref.innerText = body.message;
-                    window.location.href = 'https://web.njit.edu/~aet6/cs490beta/studentLanding.html';
+                    window.location.href = 'https://web.njit.edu/~aet6/cs490rc/studentLanding.html';
                     })
             }
         var subBTN = document.getElementById("submitExam");

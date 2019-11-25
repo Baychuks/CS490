@@ -64,8 +64,7 @@
                 })
                 .then(body => {
                     console.log(body)
-                    h3Ref.style.display = "block";
-                    h3Ref.innerText = body.message;                   
+                    window.location.href = 'https://web.njit.edu/~aet6/cs490rc/profReviewScores.php';                  
                     })
             }
         var subBTN = document.getElementById("changeGrade");

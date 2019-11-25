@@ -77,6 +77,7 @@
             </tr>
         </table>
         <br />
+        <h3 id = "msgDisplay" style = "display:none; text-align: center; ">  Submit message </h3>
         <input type="submit" id= "submitExam" style="position: absolute; left: 46%;width: 100px;height: 40px;"/><br /><br /><br /> 
         <input type="button" style="position: absolute; left: 44%;" onclick="window.location.href = 'https://web.njit.edu/~aet6/cs490rc/profLanding.html';" value="Back to the Homepage" />
         <br>
@@ -88,6 +89,7 @@
             // selected table reference and a prototype row
             var selectedRowProto = document.getElementById('selectedRowPrototype');
             var selectedTable = document.querySelector('#selectedTable tbody');
+            var display = document.getElementById("msgDisplay");
             var availableQuestions = [];
             var selectedQuestions = [];
             var totalSum = 0;
@@ -201,7 +203,9 @@
             // updates a questions point value in raw data
             function changePoints(index, points) {
                 selectedQuestions[index].points = parseInt(points);
-                document.getElementById("totalPoints").innerHTML = totalSum + parseInt(points);
+                var sum = parseInt(points);
+                totalSum = totalSum + sum;
+                document.getElementById("totalPoints").innerHTML = totalSum;
             }
 
             // removes a selected question from the listl
@@ -219,8 +223,8 @@
                 })
                 .then(body => {
                     console.log(body)
-                    h3Ref.style.display = "block";
-                    h3Ref.innerText = body.message;
+                    display.style.display = "block";
+                    display.innerHTML = body.message;
                 })
             }
 

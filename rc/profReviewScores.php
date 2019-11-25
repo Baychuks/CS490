@@ -1,7 +1,6 @@
 <?php
     //send the request to aaron, doesnt require any data
     $curl = curl_init('https://web.njit.edu/~aar73/Trace.php');
-    //$curl = curl_init('http://localhost/cs490/beta/placeholderPHPs/placeholderRawJSON.php');
     curl_setopt($curl, CURLOPT_POST, true);
     curl_setopt($curl, CURLOPT_COOKIEJAR,'cookie.txt');
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -42,6 +41,8 @@
     <br>
     <h3 id = "msgDisplay" style = "display:none; text-align: center; ">  Submit message </h3>
     <script>     
+    var h3Ref = document.getElementById("msgDisplay");
+    
         function handleClick(event){
             event.preventDefault();
            fetch("https://web.njit.edu/~aar73/Noxus.php")
